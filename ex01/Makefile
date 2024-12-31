@@ -1,4 +1,4 @@
-NAME     := megaphone
+NAME     := phone_book
 LIB_NAME := lib$(NAME).a
 
 # Default flag
@@ -19,14 +19,14 @@ AR    := ar rc
 MAKE  := make
 
 # Source files
-# SRCS := $(shell find . -name "*.cpp" -type f | sort)
-MAIN := megaphone.cpp
+SRCS := $(shell find . -name "*.cpp" -type f | sort | grep -v "main.cpp")
+MAIN := main.cpp
 
 # Object directory
 OBJS_DIR := objs
 
 # Create Object directory
-# $(shell find . -type d -exec mkdir -p $(OBJS_DIR)/{} \;)
+$(shell mkdir -p $(OBJS_DIR))
 
 # Object files
 OBJS_NO_MAIN := $(SRCS:%.cpp=$(OBJS_DIR)/%.o)
@@ -40,7 +40,7 @@ BAR_LENGTH   := $(shell echo $$(($$COLUMNS / 3)))
 .PHONY:
 	all clean fclean re library
 
-$(OBJS_DIR)/%.o: %.c
+$(OBJS_DIR)/%.o: %.cpp
 	@$(CPP) $(CFLAGS) $(INCLUDE_DIR) -c $< -o $@
 	@$(eval PROGRESS=$(shell echo $$(($(PROGRESS) + 1))))
 	@PERCENTAGE=$$(($(PROGRESS) * 100 / $(SRCS_COUNT))) ; \
@@ -58,16 +58,17 @@ $(OBJS_DIR)/%.o: %.c
 
 all: $(NAME)
 
-# library:
-# 	$(AR) $(LIB_NAME) $(OBJS_NO_MAIN) $(LIBRARIES)
+library:
+	$(AR) $(LIB_NAME) $(OBJS_NO_MAIN) $(LIBRARIES)
 
-$(NAME): $(OBJS)
-	$(CPP) $(CFLAGS) $(INCLUDE_DIR) -o $(NAME) $(OBJS_MAIN)
+$(NAME): $(OBJS) library
+	$(CPP) $(CFLAGS) $(INCLUDE_DIR) -o $(NAME) $(OBJS_MAIN) $(LIB_NAME)
 
 clean:
 	$(RM) $(OBJS_DIR)
 
 fclean: clean
+	$(RM) $(LIB_NAME)
 	$(RM) $(NAME)
 
 re: fclean all
