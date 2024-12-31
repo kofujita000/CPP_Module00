@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <cstdio>
 #include <unistd.h>
 
 #include "PhoneBook.h"

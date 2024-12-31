@@ -128,9 +128,12 @@ bool Contact::searchPhoneBook(void) {
 bool Contact::inputParameter(
         char buff[CONTACT_BUFF_SIZE],
         const ::ssize_t max) {
-    ::ssize_t             buff_len;
+    static ::size_t   buff_size = CONTACT_BUFF_SIZE;
 
-    buff_len = ::read(0, buff, CONTACT_BUFF_SIZE - 1);
+    ::ssize_t               buff_len;
+    char                    *buff_ptr = buff;
+
+    buff_len = ::getline(&buff_ptr, &buff_size, stdin);
     if (buff[buff_len - 1] == '\n')
         buff_len --;
     if (buff_len < 0 || max < buff_len) {
@@ -165,10 +168,13 @@ void Contact::makeOutputValue(
 
 
 void Contact::clearRead(void) {
-    char        buff[CONTACT_BUFF_SIZE];
-    std::size_t len = CONTACT_BUFF_SIZE;
+    static ::size_t     buff_size = CONTACT_BUFF_SIZE;
+
+    std::size_t         len = CONTACT_BUFF_SIZE;
+    char                buff[CONTACT_BUFF_SIZE];
+    char                *buff_ptr = buff;
 
     while (len == CONTACT_BUFF_SIZE) {
-        len = ::read(0, buff, CONTACT_BUFF_SIZE);
+        len = ::getline(&buff_ptr, &buff_size, stdin);
     }
 }
